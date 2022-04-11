@@ -115,6 +115,33 @@ predict(lm_fit, new_data = df)
 
 #### Question 7:
 
+```{r}
+#install.packages("yardstick")
+library(yardstick)
+
+#create metric set
+abalone_metrics <- metric_set(rmse, rsq, mae)
+
+#use predict() 
+abalone_train_res <- predict(lm_fit, new_data = abalone_train %>%
+                               select(-age))
+
+#use bind_cols()
+abalone_train_res <- bind_cols(abalone_train_res, abalone_train %>%
+                                 select(age))
+
+abalone_train_res
+
+#apply metric set to tibble
+abalone_metrics(abalone_train_res, truth = age, estimate = .pred)
+
+
+```
+
+The $R^2$ in this model is 0.556, meaning that 55.6% of the training data set fit the model.
+ 
+
+
 
 
 
