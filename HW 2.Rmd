@@ -1,0 +1,105 @@
+---
+title: "Homework 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Linear Regression 
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+```
+
+
+```{r}
+abalone <- read_csv("homework-2/data/abalone.csv", show_col_types = FALSE)
+```
+
+
+#### Question 1: 
+
+```{r}
+abalone <- abalone %>%
+  mutate(age = rings + 1.5)
+
+ggplot(abalone, aes(x = age)) +
+  geom_histogram(color = "black", binwidth = 1)
+
+mean(abalone$age)
+median(abalone$age)
+var(abalone$age)
+range(abalone$age)
+```
+
+The variable age follows a poisson distribution with a mean of 11.43 and a median of 10.5, and a variance of 10.4
+wtihin a range of 2.5 to 30.5.
+
+
+#### Question 2:
+
+```{r}
+set.seed(0714)
+
+#split the data
+abalone_split <- initial_split(abalone, prop = 0.80,
+                               strata = age)
+#create train and test set
+abalone_train <- training(abalone_split)
+abalone_test <- testing(abalone_split)
+```
+
+
+#### Question 3:
+For this recipe we shouldn't include the variable rings, because both the variables are highly correlated, because rings was used to create the variable age. Given age is created by adding 1.5 to rings, as observations for rings go down, so do the observations for age. 
+
+```{r}
+#create recipe with training data
+abalone_train_recipe <- 
+  recipe(age ~ type + longest_shell + diameter +
+           height + whole_weight + shucked_weight +
+           viscera_weight + shell_weight, 
+         data = abalone_train) %>%
+  #create dummy code
+  step_dummy(type) %>%
+  #create interactions
+  step_interact(~ starts_with("type"):shucked_weight) %>%
+  step_interact(~ longest_shell:diameter) %>%
+  step_interact(~ shucked_weight:shell_weight) %>%
+  prep(training = abalone_train) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors())
+
+summary(abalone_train_recipe)
+
+abalone_train_recipe
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
