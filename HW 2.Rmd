@@ -1,6 +1,8 @@
 ---
 title: "Homework 2"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -21,7 +23,10 @@ abalone <- read_csv("homework-2/data/abalone.csv", show_col_types = FALSE)
 ```
 
 
-#### Question 1: 
+#### Question 1:  
+
+
+
 
 ```{r}
 abalone <- abalone %>%
@@ -42,6 +47,9 @@ within a range of 2.5 to 30.5.
 
 #### Question 2:
 
+
+
+
 ```{r}
 set.seed(0714)
 
@@ -55,6 +63,7 @@ abalone_test <- testing(abalone_split)
 
 
 #### Question 3:
+
 For this recipe we shouldn't include the variable rings, because both the variables are highly correlated, because rings was used to create the variable age. Given age is created by adding 1.5 to rings, as observations for rings go down, so do the observations for age. 
 
 ```{r}
@@ -76,7 +85,10 @@ abalone_train_recipe <-
 ```
 
 
-#### Question 4:
+#### Question 4: 
+
+
+
 
 ```{r}
 lm_model <- linear_reg() %>%
@@ -84,7 +96,10 @@ lm_model <- linear_reg() %>%
 ```
 
 
-#### Question 5:
+#### Question 5: 
+
+
+
 
 ```{r}
 lm_wflow <- workflow() %>%
@@ -98,12 +113,10 @@ abalone_lm <- lm_fit %>%
   tidy()
 
 abalone_lm
-
 ```
 
 
 #### Question 6:
-
 ```{r}
 df <- data.frame(longest_shell = 0.50, diameter = 0.10, 
                  height = 0.30, whole_weight = 4, 
@@ -114,7 +127,6 @@ predict(lm_fit, new_data = df)
 
 
 #### Question 7:
-
 ```{r}
 #install.packages("yardstick")
 library(yardstick)
