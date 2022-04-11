@@ -30,14 +30,14 @@ abalone <- abalone %>%
 ggplot(abalone, aes(x = age)) +
   geom_histogram(color = "black", binwidth = 1)
 
-mean(abalone$age)
+mean(abalone$age) 
 median(abalone$age)
-var(abalone$age)
+var(abalone$age) 
 range(abalone$age)
 ```
 
 The variable age follows a poisson distribution with a mean of 11.43 and a median of 10.5, and a variance of 10.4
-wtihin a range of 2.5 to 30.5.
+within a range of 2.5 to 30.5.
 
 
 #### Question 2:
@@ -65,28 +65,55 @@ abalone_train_recipe <-
            viscera_weight + shell_weight, 
          data = abalone_train) %>%
   #create dummy code
-  step_dummy(type) %>%
+  step_dummy(all_nominal_predictors()) %>%
   #create interactions
   step_interact(~ starts_with("type"):shucked_weight) %>%
   step_interact(~ longest_shell:diameter) %>%
   step_interact(~ shucked_weight:shell_weight) %>%
-  prep(training = abalone_train) %>%
-  step_center(all_predictors()) %>%
-  step_scale(all_predictors())
+  #center and scale all predictors
+  step_normalize(all_predictors())  
 
-summary(abalone_train_recipe)
-
-abalone_train_recipe
 ```
 
 
+#### Question 4:
+
+```{r}
+lm_model <- linear_reg() %>%
+  set_engine("lm")
+```
 
 
+#### Question 5:
+
+```{r}
+lm_wflow <- workflow() %>%
+  add_model(lm_model) %>%
+  add_recipe(abalone_train_recipe)
+
+lm_fit <- fit(lm_wflow, abalone_train)
+
+abalone_lm <- lm_fit %>%
+  extract_fit_parsnip() %>%
+  tidy()
+
+abalone_lm
+
+```
 
 
+#### Question 6:
+
+```{r}
+df <- data.frame(longest_shell = 0.50, diameter = 0.10, 
+                 height = 0.30, whole_weight = 4, 
+                 shucked_weight = 1, viscera_weight = 2, 
+                 shell_weight = 1, type = "F")
+predict(lm_fit, new_data = df)
+```
 
 
-
+#### Question 7:
 
 
 
